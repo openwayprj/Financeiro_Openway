@@ -1,0 +1,28 @@
+# Configuração de deploy no Netlify — Openway Financeiro
+# Variáveis de ambiente (Site configuration > Environment variables):
+#   DATABASE_URL  = string de conexão do Neon (com -pooler e sslmode=require)   [obrigatória]
+
+[build]
+  command = "npm run build"      # copia o Chart.js para public/vendor
+  publish = "public"             # front-end estático (servido pelo CDN)
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "nft"
+  included_files = ["database/schema.sql"]
+
+# API (Express) roda como função
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+# Aplicação de página única: qualquer outra rota abre o index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

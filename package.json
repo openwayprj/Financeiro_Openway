@@ -1,0 +1,28 @@
+{
+  "name": "openway-financeiro",
+  "version": "1.0.0",
+  "description": "Sistema de Contas a Pagar e Receber - Openway Informática (PostgreSQL/Neon + Netlify)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "build": "node scripts/prebuild.js",
+    "seed": "node --disable-warning=ExperimentalWarning src/seed.js",
+    "db:setup": "node scripts/setup-banco.js",
+    "db:migrar": "node --disable-warning=ExperimentalWarning scripts/migrar-sqlite-para-postgres.js",
+    "db:restaurar": "node scripts/restaurar-backup.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/api.test.js"
+  },
+  "dependencies": {
+    "@netlify/functions": "^6.0.3",
+    "bcryptjs": "^3.0.3",
+    "chart.js": "^4.5.1",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "pg": "^8.23.1",
+    "serverless-http": "^4.0.0"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "private": true
+}
