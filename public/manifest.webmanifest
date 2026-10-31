@@ -1,0 +1,23 @@
+{
+  "name": "Openway Financeiro",
+  "short_name": "Financeiro",
+  "description": "Controle financeiro pessoal e empresarial: lançamentos do dia e lançamento rápido por voz.",
+  "lang": "pt-BR",
+  "id": "/",
+  "start_url": "/#/hoje",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0f1a",
+  "theme_color": "#0a0f1a",
+  "categories": ["finance", "business"],
+  "icons": [
+    { "src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Contas de hoje", "short_name": "Hoje", "url": "/#/hoje", "icons": [{ "src": "/img/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Lançar conta a pagar por voz", "short_name": "Lançar", "url": "/#/rapido", "icons": [{ "src": "/img/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

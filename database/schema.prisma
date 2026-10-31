@@ -1,0 +1,181 @@
+// =====================================================================
+//  OPENWAY FINANCEIRO - Modelo equivalente em Prisma (referência)
+//  O sistema roda com node:sqlite (nativo do Node) + database/schema.sql.
+//  Este arquivo documenta as mesmas entidades para uma futura migração
+//  para Prisma/PostgreSQL (troque provider para "postgresql").
+// =====================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:../data/financeiro.db"
+}
+
+enum TipoCategoria { RECEITA DESPESA }
+enum Ambiente      { PESSOAL EMPRESA }
+enum NaturezaCat   { PESSOAL EMPRESA AMBOS }   // AMBOS = Empresa e Pessoal
+enum StatusColab   { ATIVO INATIVO }
+enum Perfil        { ADMIN OPERADOR }
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  login     String   @unique
+  senhaHash String   @map("senha_hash")
+  perfil    Perfil   @default(ADMIN)
+  ativo     Boolean  @default(true)
+  criadoEm  DateTime @default(now()) @map("criado_em")
+  sessoes   Sessao[]
+  @@map("usuarios")
+}
+
+model Sessao {
+  token     String   @id
+  usuarioId Int      @map("usuario_id")
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  expiraEm  DateTime @map("expira_em")
+  @@map("sessoes")
+}
+
+model Categoria {
+  id        Int           @id @default(autoincrement())
+  nome      String
+  tipo      TipoCategoria
+  natureza  NaturezaCat
+  ativo     Boolean       @default(true)
+  receber   ContaReceber[]
+  pagar     ContaPagar[]
+  @@unique([nome, tipo, natureza])
+  @@map("categorias")
+}
+
+model Cliente {
+  id       Int     @id @default(autoincrement())
+  nome     String
+  cpfCnpj  String? @unique @map("cpf_cnpj")
+  contato  String?
+  email    String?
+  telefone String?
+  ativo    Boolean @default(true)
+  titulos  ContaReceber[]
+  @@map("clientes")
+}
+
+model Fornecedor {
+  id       Int     @id @default(autoincrement())
+  nome     String
+  cpfCnpj  String? @unique @map("cpf_cnpj")
+  contato  String?
+  email    String?
+  telefone String?
+  ativo    Boolean @default(true)
+  titulos  ContaPagar[]
+  @@map("fornecedores")
+}
+
+model Colaborador {
+  id            Int          @id @default(autoincrement())
+  nome          String
+  cargo         String?
+  status        StatusColab  @default(ATIVO)
+  receberResp   ContaReceber[]
+  pagarResp     ContaPagar[]
+  rateioReceber ContaReceberColaborador[]
+  rateioPagar   ContaPagarColaborador[]
+  @@map("colaboradores")
+}
+
+model FormaPagamento {
+  id      Int     @id @default(autoincrement())
+  nome    String  @unique
+  ativo   Boolean @default(true)
+  receber ContaReceber[]
+  pagar   ContaPagar[]
+  @@map("formas_pagamento")
+}
+
+model ContaBancaria {
+  id       Int      @id @default(autoincrement())
+  nome     String
+  banco    String?
+  agencia  String?
+  conta    String?
+  natureza Ambiente @default(EMPRESA)
+  ativo    Boolean  @default(true)
+  receber  ContaReceber[]
+  pagar    ContaPagar[]
+  @@map("contas_bancarias")
+}
+
+model ContaReceber {
+  nroDocumento     Int             @id @default(autoincrement()) @map("nro_documento")
+  dataEmissao      DateTime        @map("data_emissao")    @db.Date
+  dataVencimento   DateTime        @map("data_vencimento") @db.Date
+  dataPagamento    DateTime?       @map("data_pagamento")  @db.Date
+  tipoAmbiente     Ambiente        @map("tipo_ambiente")
+  clienteId        Int             @map("cliente_id")
+  cliente          Cliente         @relation(fields: [clienteId], references: [id])
+  categoriaId      Int             @map("categoria_id")
+  categoria        Categoria       @relation(fields: [categoriaId], references: [id])
+  colaboradorId    Int             @map("colaborador_id")          // obrigatório
+  colaborador      Colaborador     @relation(fields: [colaboradorId], references: [id])
+  valorCentavos    Int             @map("valor_centavos")
+  observacoes      String?
+  formaPagamentoId Int?            @map("forma_pagamento_id")
+  formaPagamento   FormaPagamento? @relation(fields: [formaPagamentoId], references: [id])
+  contaBancariaId  Int?            @map("conta_bancaria_id")
+  contaBancaria    ContaBancaria?  @relation(fields: [contaBancariaId], references: [id])
+  rateio           ContaReceberColaborador[]
+  @@index([dataVencimento])
+  @@index([dataPagamento])
+  @@map("contas_receber")
+}
+
+model ContaPagar {
+  nroDocumento     Int             @id @default(autoincrement()) @map("nro_documento")
+  dataEmissao      DateTime        @map("data_emissao")    @db.Date
+  dataVencimento   DateTime        @map("data_vencimento") @db.Date
+  dataPagamento    DateTime?       @map("data_pagamento")  @db.Date
+  tipoAmbiente     Ambiente        @map("tipo_ambiente")
+  fornecedorId     Int             @map("fornecedor_id")
+  fornecedor       Fornecedor      @relation(fields: [fornecedorId], references: [id])
+  categoriaId      Int             @map("categoria_id")
+  categoria        Categoria       @relation(fields: [categoriaId], references: [id])
+  colaboradorId    Int?            @map("colaborador_id")          // opcional
+  colaborador      Colaborador?    @relation(fields: [colaboradorId], references: [id])
+  valorCentavos    Int             @map("valor_centavos")
+  observacoes      String?
+  formaPagamentoId Int?            @map("forma_pagamento_id")
+  formaPagamento   FormaPagamento? @relation(fields: [formaPagamentoId], references: [id])
+  contaBancariaId  Int?            @map("conta_bancaria_id")
+  contaBancaria    ContaBancaria?  @relation(fields: [contaBancariaId], references: [id])
+  rateio           ContaPagarColaborador[]
+  @@index([dataVencimento])
+  @@index([dataPagamento])
+  @@map("contas_pagar")
+}
+
+model ContaReceberColaborador {
+  id            Int          @id @default(autoincrement())
+  nroDocumento  Int          @map("nro_documento")
+  titulo        ContaReceber @relation(fields: [nroDocumento], references: [nroDocumento], onDelete: Cascade)
+  colaboradorId Int          @map("colaborador_id")
+  colaborador   Colaborador  @relation(fields: [colaboradorId], references: [id])
+  valorCentavos Int          @map("valor_centavos")
+  @@unique([nroDocumento, colaboradorId])
+  @@map("contas_receber_colaboradores")
+}
+
+model ContaPagarColaborador {
+  id            Int         @id @default(autoincrement())
+  nroDocumento  Int         @map("nro_documento")
+  titulo        ContaPagar  @relation(fields: [nroDocumento], references: [nroDocumento], onDelete: Cascade)
+  colaboradorId Int         @map("colaborador_id")
+  colaborador   Colaborador @relation(fields: [colaboradorId], references: [id])
+  valorCentavos Int         @map("valor_centavos")
+  @@unique([nroDocumento, colaboradorId])
+  @@map("contas_pagar_colaboradores")
+}

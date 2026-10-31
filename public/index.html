@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0f1a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Financeiro">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+  <title>Openway Financeiro</title>
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <!-- Tela de login / configuração inicial -->
+  <div id="login" class="login-page hidden">
+    <form class="card login-card" id="login-form" autocomplete="on">
+      <img src="/img/logo.png" alt="Openway Informática">
+      <h2 id="login-titulo">Controle Financeiro · Acesso</h2>
+      <div class="f hidden" id="f-nome"><label for="l-nome">Seu nome</label><input class="input" id="l-nome" name="nome"></div>
+      <div class="f"><label for="l-login">Login</label><input class="input" id="l-login" name="login" autocomplete="username" required></div>
+      <div class="f"><label for="l-senha">Senha</label><input class="input" id="l-senha" name="senha" type="password" autocomplete="current-password" required></div>
+      <button class="btn primary" type="submit" id="login-btn">Entrar</button>
+      <div class="foot">Openway Informática Ltda. · Gestão Financeira Pessoal &amp; Empresarial</div>
+    </form>
+  </div>
+
+  <!-- Aplicação -->
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <img src="/img/logo.png" alt="Openway Informática">
+        <small>Controle Financeiro</small>
+      </div>
+      <nav class="nav" id="nav"></nav>
+      <button class="btn side-instalar js-instalar" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg><span>Instalar app no celular</span></button>
+      <div class="user">
+        <div class="avatar" id="u-avatar">?</div>
+        <div class="info"><b id="u-nome"></b><span id="u-perfil"></span></div>
+        <button class="btn ghost icon" id="btn-senha" title="Alterar senha" aria-label="Alterar senha"></button>
+        <button class="btn ghost icon" id="btn-sair" title="Sair" aria-label="Sair"></button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <h1><button class="btn ghost icon menu-btn" id="btn-menu" aria-label="Menu"></button><span id="titulo">Dashboard</span></h1>
+        <div class="filters" id="filtros">
+          <div class="presets" id="presets">
+            <button data-p="mes">Este Mês</button>
+            <button data-p="anterior">Mês Anterior</button>
+            <button data-p="proximo">Próximo Mês</button>
+            <button data-p="ano">Ano Atual</button>
+          </div>
+          <div class="daterange">
+            <input type="date" id="f-de" aria-label="Data inicial"><span>até</span><input type="date" id="f-ate" aria-label="Data final">
+          </div>
+          <div class="seg" id="f-amb" role="group" aria-label="Âmbito">
+            <button data-a="TODAS">Todas</button>
+            <button data-a="PESSOAL">Apenas Pessoal</button>
+            <button data-a="EMPRESA">Apenas Empresa</button>
+          </div>
+        </div>
+      </header>
+      <main class="content" id="view"></main>
+    </div>
+  </div>
+
+  <!-- Barra de navegação para celular -->
+  <nav class="tabbar hidden" id="tabbar" aria-label="Navegação principal">
+    <a href="#/hoje" data-r="hoje"><i data-ic="hoje"></i><span>Hoje</span></a>
+    <a href="#/pagar" data-r="pagar"><i data-ic="pagar"></i><span>A pagar</span></a>
+    <a href="#/rapido" data-r="rapido" class="tab-add"><i data-ic="rapido"></i><span>Lançar</span></a>
+    <a href="#/receber" data-r="receber"><i data-ic="receber"></i><span>A receber</span></a>
+    <button type="button" id="tab-menu"><i data-ic="menu"></i><span>Menu</span></button>
+  </nav>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="/vendor/chart.js/chart.umd.js"></script>
+  <script src="/js/core.js"></script>
+  <script src="/js/dashboard.js"></script>
+  <script src="/js/lancamentos.js"></script>
+  <script src="/js/cadastros.js"></script>
+  <script src="/js/colaboradores.js"></script>
+  <script src="/js/centros.js"></script>
+  <script src="/js/projecao.js"></script>
+  <script src="/js/calendario.js"></script>
+  <script src="/js/admin.js"></script>
+  <script src="/js/importacao-diaria.js"></script>
+  <script src="/js/rapido-parser.js"></script>
+  <script src="/js/mobile.js"></script>
+  <script src="/js/rapido.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
